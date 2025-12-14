@@ -11,6 +11,10 @@ export const translations = {
     filesApp: 'الملفات',
     calculatorApp: 'الحاسبة',
     editorApp: 'محرر النصوص',
+    androidApp: 'وضع الهاتف',
+    chessApp: 'الشطرنج',
+    ludoApp: 'لودو',
+    unoApp: 'أونو',
     aboutTitle: 'أنا حمزة',
     aboutSubtitle: 'عاشق التكنولوجيا | ١١ سنة',
     sysExpert: 'خبير أنظمة',
@@ -64,6 +68,24 @@ export const translations = {
     editorPlaceholder: 'ابدأ الكتابة هنا...',
     save: 'حفظ',
     fileSaved: 'تم حفظ الملف!',
+    // Android View
+    desktopMode: 'الكمبيوتر',
+    searchApps: 'بحث...',
+    // Chess
+    whiteTurn: 'دور الأبيض (أنت)',
+    blackTurn: 'دور الأسود (الكمبيوتر)',
+    checkmate: 'كش ملك! انتهت اللعبة',
+    restartGame: 'لعبة جديدة',
+    // Ludo
+    rollDice: 'ارمِ النرد',
+    blueTurn: 'دور الأزرق (أنت)',
+    waiting: 'انتظار...',
+    ludoWin: 'الفائز هو: ',
+    // UNO
+    unoWin: 'فاز باللعبة!',
+    unoDraw: 'سحب ورقة',
+    unoColorPick: 'اختر لوناً',
+    yourTurn: 'دورك',
   },
   en: {
     activities: 'Activities',
@@ -75,6 +97,10 @@ export const translations = {
     filesApp: 'Files',
     calculatorApp: 'Calculator',
     editorApp: 'Text Editor',
+    androidApp: 'Phone Mode',
+    chessApp: 'Chess',
+    ludoApp: 'Ludo',
+    unoApp: 'UNO',
     aboutTitle: 'I am Hamza',
     aboutSubtitle: 'Tech Enthusiast | 11 Years Old',
     sysExpert: 'Systems Expert',
@@ -128,6 +154,24 @@ export const translations = {
     editorPlaceholder: 'Start typing here...',
     save: 'Save',
     fileSaved: 'File Saved!',
+    // Android View
+    desktopMode: 'Desktop',
+    searchApps: 'Search apps...',
+    // Chess
+    whiteTurn: 'White Turn (You)',
+    blackTurn: 'Black Turn (AI)',
+    checkmate: 'Checkmate! Game Over',
+    restartGame: 'New Game',
+    // Ludo
+    rollDice: 'Roll Dice',
+    blueTurn: 'Blue Turn (You)',
+    waiting: 'Waiting...',
+    ludoWin: 'Winner is: ',
+    // UNO
+    unoWin: 'Wins the game!',
+    unoDraw: 'Drew a card',
+    unoColorPick: 'Pick Color',
+    yourTurn: 'Your Turn',
   },
   zh: {
     activities: '活动',
@@ -139,6 +183,10 @@ export const translations = {
     filesApp: '文件',
     calculatorApp: '计算器',
     editorApp: '文本编辑器',
+    androidApp: '手机模式',
+    chessApp: '国际象棋',
+    ludoApp: '飞行棋',
+    unoApp: '优诺牌',
     aboutTitle: '我是 Hamza',
     aboutSubtitle: '科技爱好者 | 11岁',
     sysExpert: '系统专家',
@@ -192,5 +240,23 @@ export const translations = {
     editorPlaceholder: '在这里开始输入...',
     save: '保存',
     fileSaved: '文件已保存！',
+    // Android View
+    desktopMode: '桌面模式',
+    searchApps: '搜索应用...',
+    // Chess
+    whiteTurn: '白方回合 (你)',
+    blackTurn: '黑方回合 (电脑)',
+    checkmate: '将死！游戏结束',
+    restartGame: '新游戏',
+    // Ludo
+    rollDice: '掷骰子',
+    blueTurn: '蓝方回合 (你)',
+    waiting: '等待...',
+    ludoWin: '获胜者: ',
+    // UNO
+    unoWin: '获胜!',
+    unoDraw: '抽牌',
+    unoColorPick: '选择颜色',
+    yourTurn: '你的回合',
   }
 };

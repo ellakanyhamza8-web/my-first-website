@@ -31,9 +31,9 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onSystemMenuClick, onCalen
   };
 
   return (
-    <div className="h-8 bg-white/30 dark:bg-black/30 backdrop-blur-xl text-gray-800 dark:text-white flex justify-between items-center px-4 text-xs select-none z-50 w-full fixed top-0 left-0 border-b border-white/10 shadow-sm" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="h-8 bg-white/40 dark:bg-black/40 backdrop-blur-xl text-black dark:text-white flex justify-between items-center px-4 text-xs select-none z-50 w-full fixed top-0 left-0 border-b border-black/5 dark:border-white/10 shadow-sm transition-colors duration-300" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Left Side: Apple Logo & App Menu */}
-      <div className="flex items-center h-full space-x-4 space-x-reverse">
+      <div className="flex items-center h-full space-x-4 space-x-reverse font-medium">
         <div 
             className="font-bold text-lg cursor-pointer hover:opacity-70 transition-opacity px-1"
             onClick={onActivitiesClick}
@@ -49,26 +49,27 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onSystemMenuClick, onCalen
         <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">Help</div>
       </div>
 
-      {/* Right Side: Status Icons & Clock */}
-      <div className="flex items-center space-x-4 space-x-reverse h-full">
-        <div className="cursor-pointer hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
+      {/* Center: Clock/Date */}
+      <div 
+          className="absolute left-1/2 transform -translate-x-1/2 font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 px-3 py-1 rounded transition-colors z-20"
+          onClick={onCalendarClick}
+      >
+          {formatDate(date)}
+      </div>
+
+      {/* Right Side: Status Icons */}
+      <div className="flex items-center space-x-4 space-x-reverse h-full font-medium">
+        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
             <Battery size={16} className="rotate-0" />
         </div>
-        <div className="cursor-pointer hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
+        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
             <Wifi size={16} />
         </div>
         <div 
-            className="cursor-pointer hover:bg-white/20 p-1 rounded transition-colors"
+            className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors"
             onClick={onSystemMenuClick}
         >
              <Command size={16} />
-        </div>
-        
-        <div 
-            className="font-medium cursor-pointer hover:bg-white/20 px-2 py-1 rounded transition-colors"
-            onClick={onCalendarClick}
-        >
-            {formatDate(date)}
         </div>
       </div>
     </div>

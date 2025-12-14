@@ -8,7 +8,11 @@ export enum AppID {
   SETTINGS = 'settings',
   FILES = 'files',
   CALCULATOR = 'calculator',
-  EDITOR = 'editor'
+  EDITOR = 'editor',
+  ANDROID = 'android',
+  CHESS = 'chess',
+  LUDO = 'ludo',
+  UNO = 'uno'
 }
 
 export type Language = 'ar' | 'en' | 'zh';

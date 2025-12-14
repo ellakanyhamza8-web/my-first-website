@@ -9,12 +9,17 @@ import { ProjectsApp } from './apps/Projects';
 import { FilesApp } from './apps/Files';
 import { CalculatorApp } from './apps/Calculator';
 import { TextEditorApp } from './apps/TextEditor';
+import { ChessApp } from './apps/Chess';
+import { LudoApp } from './apps/Ludo';
+import { UnoApp } from './apps/Uno';
 import { AndroidView } from './components/AndroidView';
+import { LockScreen } from './components/LockScreen';
 import { AppID, AppConfig, WindowState, Language } from './types';
 import { translations } from './utils/translations';
 import { 
     Terminal, User, Youtube, Code, Settings, Volume2, Wifi, Bluetooth, Battery, Power, 
-    Sun, Moon, Lock, Bell, Search, Folder, Calculator, FileText, Smartphone 
+    Sun, Moon, Lock, Bell, Search, Folder, Calculator, FileText, Smartphone,
+    Gamepad2, Swords, Layers, VolumeX, WifiOff, BluetoothOff
 } from 'lucide-react';
 
 const INITIAL_WINDOWS: Record<string, WindowState> = {
@@ -97,6 +102,36 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
     zIndex: 1,
     position: { x: 150, y: 150 },
     size: { width: 700, height: 500 },
+  },
+  [AppID.CHESS]: {
+    id: AppID.CHESS,
+    title: 'Chess',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 1,
+    position: { x: 180, y: 100 },
+    size: { width: 550, height: 650 },
+  },
+  [AppID.LUDO]: {
+    id: AppID.LUDO,
+    title: 'Ludo',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 1,
+    position: { x: 200, y: 120 },
+    size: { width: 800, height: 600 },
+  },
+  [AppID.UNO]: {
+    id: AppID.UNO,
+    title: 'UNO',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 1,
+    position: { x: 150, y: 100 },
+    size: { width: 900, height: 700 },
   }
 };
 
@@ -109,11 +144,18 @@ export default function App() {
   const [lang, setLang] = useState<Language>('ar');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAndroidMode, setIsAndroidMode] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   // New Interactive States
   const [isSystemMenuOpen, setIsSystemMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAppGridOpen, setIsAppGridOpen] = useState(false);
+
+  // System Controls State
+  const [wifiEnabled, setWifiEnabled] = useState(true);
+  const [bluetoothEnabled, setBluetoothEnabled] = useState(false);
+  const [brightness, setBrightness] = useState(100);
+  const [volume, setVolume] = useState(70);
 
   // Apply Language Direction and Theme Class
   useEffect(() => {
@@ -128,10 +170,16 @@ export default function App() {
 
   const t = translations[lang];
 
-  // Enhanced Icon Styles: Larger, Better Gradients, Inner Shadows for 3D effect
+  // Enhanced Icon Styles
   const iconBaseClass = "w-full h-full rounded-[18px] flex items-center justify-center text-white shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.4)] bg-gradient-to-br border border-white/10";
 
   const APPS: AppConfig[] = [
+    {
+        id: AppID.ANDROID,
+        title: t.androidApp,
+        icon: <div className={`${iconBaseClass} from-[#11998e] to-[#38ef7d]`}><Smartphone size={32} className="text-white drop-shadow-md" /></div>,
+        component: null, // Handled separately
+    },
     {
         id: AppID.FILES,
         title: t.filesApp,
@@ -163,6 +211,24 @@ export default function App() {
           </div>
         ),
       },
+    {
+        id: AppID.CHESS,
+        title: t.chessApp,
+        icon: <div className={`${iconBaseClass} from-[#2c3e50] to-[#4ca1af]`}><Swords size={32} /></div>,
+        component: <ChessApp lang={lang} />,
+    },
+    {
+        id: AppID.LUDO,
+        title: t.ludoApp,
+        icon: <div className={`${iconBaseClass} from-[#8e2de2] to-[#4a00e0]`}><Gamepad2 size={32} /></div>,
+        component: <LudoApp lang={lang} />,
+    },
+    {
+        id: AppID.UNO,
+        title: t.unoApp,
+        icon: <div className={`${iconBaseClass} from-[#f12711] to-[#f5af19]`}><Layers size={32} className="rotate-90" /></div>,
+        component: <UnoApp lang={lang} />,
+    },
     {
       id: AppID.ABOUT,
       title: t.aboutApp,
@@ -211,6 +277,12 @@ export default function App() {
   const handleAppClick = (id: AppID) => {
     // Close App Grid if open
     if (isAppGridOpen) setIsAppGridOpen(false);
+    
+    // Switch to Android Mode
+    if (id === AppID.ANDROID) {
+        setIsAndroidMode(true);
+        return;
+    }
 
     // If in Android Mode, just set active app id
     if (isAndroidMode) {
@@ -223,8 +295,26 @@ export default function App() {
       const newZ = maxZIndex + 1;
       setMaxZIndex(newZ);
       
-      if (window.isOpen && !window.isMinimized && activeAppId === id) {
+      if (window && window.isOpen && !window.isMinimized && activeAppId === id) {
           return { ...prev, [id]: { ...window, isMinimized: true } };
+      }
+
+      // Create window if it doesn't exist (though INITIAL_WINDOWS handles most)
+      const config = APPS.find(a => a.id === id);
+      if (!window && config) {
+           return {
+               ...prev,
+               [id]: {
+                   id,
+                   title: config.title,
+                   isOpen: true,
+                   isMinimized: false,
+                   isMaximized: false,
+                   zIndex: newZ,
+                   position: { x: 100, y: 100 },
+                   size: config.defaultSize || { width: 800, height: 600 }
+               }
+           }
       }
 
       return {
@@ -234,7 +324,7 @@ export default function App() {
           isOpen: true,
           isMinimized: false,
           zIndex: newZ,
-          title: APPS.find(a => a.id === id)?.title || window.title 
+          title: APPS.find(a => a.id === id)?.title || window?.title || ''
         },
       };
     });
@@ -270,6 +360,11 @@ export default function App() {
     if (isCalendarOpen) setIsCalendarOpen(false);
   };
 
+  // Lock Screen
+  if (isLocked) {
+      return <LockScreen onUnlock={() => setIsLocked(false)} lang={lang} wallpaper={wallpaper} />;
+  }
+
   // Android Mode Render
   if (isAndroidMode) {
      return (
@@ -280,6 +375,7 @@ export default function App() {
           closeApp={() => setActiveAppId(null)}
           lang={lang}
           onSwitchToDesktop={() => setIsAndroidMode(false)}
+          isDarkMode={isDarkMode}
         />
      );
   }
@@ -287,6 +383,12 @@ export default function App() {
   // Desktop Mode Render
   return (
     <div className="w-screen h-screen overflow-hidden relative bg-black font-sans" onClick={handleOutsideClick}>
+      {/* Brightness Overlay Filter */}
+      <div 
+         className="absolute inset-0 pointer-events-none z-[100] bg-black transition-opacity duration-100" 
+         style={{ opacity: (100 - brightness) / 100 }} 
+      />
+
       {/* Wallpaper */}
       <div className={`absolute inset-0 ${wallpaper} transition-all duration-700 z-0 bg-cover bg-center`} />
       
@@ -310,17 +412,23 @@ export default function App() {
       {/* Windows Area */}
       <div className="absolute top-8 left-0 right-0 bottom-24 overflow-hidden pointer-events-none">
         <div className="w-full h-full relative pointer-events-auto">
-            {APPS.map((app) => (
-            <Window
-                key={app.id}
-                windowState={windows[app.id]}
-                onClose={closeApp}
-                onMinimize={minimizeApp}
-                onFocus={focusWindow}
-            >
-                {app.component}
-            </Window>
-            ))}
+            {APPS.map((app) => {
+              // Skip Android app and unconfigured windows
+              if (app.id === AppID.ANDROID) return null;
+              if (!windows[app.id]) return null;
+
+              return (
+                <Window
+                    key={app.id}
+                    windowState={windows[app.id]}
+                    onClose={closeApp}
+                    onMinimize={minimizeApp}
+                    onFocus={focusWindow}
+                >
+                    {app.component}
+                </Window>
+              );
+            })}
         </div>
       </div>
 
@@ -328,50 +436,72 @@ export default function App() {
       {isSystemMenuOpen && (
         <div 
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-10 right-2 w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-4 text-black dark:text-white z-50 border border-white/20"
+          className={`absolute top-10 ${lang === 'ar' ? 'left-2' : 'right-2'} w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-4 text-black dark:text-white z-50 border border-white/20`}
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
           {/* Toggles */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-             <div className="bg-white/50 dark:bg-gray-800/80 p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer hover:bg-white/70 transition">
-                <div className="bg-blue-500 p-2 rounded-full text-white"><Wifi size={18} /></div>
+             <div 
+                onClick={() => setWifiEnabled(!wifiEnabled)}
+                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${wifiEnabled ? 'bg-white/70 dark:bg-gray-700' : 'bg-white/30 dark:bg-gray-800/50'}`}
+             >
+                <div className={`p-2 rounded-full text-white transition-colors ${wifiEnabled ? 'bg-blue-500' : 'bg-gray-500'}`}>
+                    {wifiEnabled ? <Wifi size={18} /> : <WifiOff size={18} />}
+                </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-bold">Wi-Fi</span>
-                    <span className="text-xs opacity-70">Hamza-5G</span>
+                    <span className="text-sm font-bold">{t.wifi}</span>
+                    <span className="text-xs opacity-70">{wifiEnabled ? 'Hamza-5G' : 'Off'}</span>
                 </div>
              </div>
-             <div className="bg-white/50 dark:bg-gray-800/80 p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer hover:bg-white/70 transition">
-                <div className="bg-gray-400 p-2 rounded-full text-white"><Bluetooth size={18} /></div>
+             <div 
+                onClick={() => setBluetoothEnabled(!bluetoothEnabled)}
+                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${bluetoothEnabled ? 'bg-white/70 dark:bg-gray-700' : 'bg-white/30 dark:bg-gray-800/50'}`}
+             >
+                <div className={`p-2 rounded-full text-white transition-colors ${bluetoothEnabled ? 'bg-blue-500' : 'bg-gray-500'}`}>
+                    {bluetoothEnabled ? <Bluetooth size={18} /> : <BluetoothOff size={18} />}
+                </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-bold">Bluetooth</span>
-                    <span className="text-xs opacity-70">Off</span>
+                    <span className="text-sm font-bold">{t.bluetooth}</span>
+                    <span className="text-xs opacity-70">{bluetoothEnabled ? 'On' : 'Off'}</span>
                 </div>
              </div>
           </div>
 
           <div className="bg-white/50 dark:bg-gray-800/80 p-4 rounded-xl mb-4 space-y-4">
+               {/* Brightness */}
                <div className="flex items-center space-x-3 space-x-reverse">
-                    <span className="text-xs font-medium w-6 text-center"><Sun size={16} /></span>
-                    <input type="range" className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white" />
+                    <span className="text-xs font-medium w-6 text-center text-gray-600 dark:text-gray-300"><Sun size={16} /></span>
+                    <input 
+                        type="range" 
+                        min="20" 
+                        max="100" 
+                        value={brightness}
+                        onChange={(e) => setBrightness(parseInt(e.target.value))}
+                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+                    />
                </div>
+               {/* Volume */}
                <div className="flex items-center space-x-3 space-x-reverse">
-                    <span className="text-xs font-medium w-6 text-center"><Volume2 size={16} /></span>
-                    <input type="range" className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-white" />
+                    <span className="text-xs font-medium w-6 text-center text-gray-600 dark:text-gray-300">
+                        {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                    </span>
+                    <input 
+                        type="range" 
+                        min="0" 
+                        max="100" 
+                        value={volume}
+                        onChange={(e) => setVolume(parseInt(e.target.value))}
+                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+                    />
                </div>
           </div>
           
-          {/* Switch to Android Button */}
-          <button 
-             onClick={() => { setIsAndroidMode(true); setIsSystemMenuOpen(false); }}
-             className="w-full bg-green-500/90 hover:bg-green-600 p-3 rounded-xl flex items-center justify-center space-x-2 space-x-reverse text-white mb-4 transition-colors shadow-lg"
-          >
-             <Smartphone size={20} />
-             <span className="font-bold">Android Mode</span>
-          </button>
-
           <div className="flex justify-between items-center bg-white/50 dark:bg-gray-800/80 p-2 rounded-xl">
-             <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 hover:bg-black/10 rounded-full transition">
+             <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 hover:bg-black/10 rounded-full transition text-gray-800 dark:text-white">
                  {isDarkMode ? <Moon size={20}/> : <Sun size={20} />}
+             </button>
+             <button onClick={() => setIsLocked(true)} className="p-2 hover:bg-black/10 rounded-full transition text-gray-800 dark:text-white">
+                 <Lock size={20} />
              </button>
              <button onClick={() => window.location.reload()} className="p-2 hover:bg-red-500/20 text-red-500 rounded-full transition">
                  <Power size={20} />
@@ -384,7 +514,7 @@ export default function App() {
       {isCalendarOpen && (
         <div 
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-10 right-4 w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 border border-white/20 overflow-hidden text-black dark:text-white flex flex-col"
+          className="absolute top-10 left-1/2 transform -translate-x-1/2 w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 border border-white/20 overflow-hidden text-black dark:text-white flex flex-col"
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
           <div className="p-4 flex-1">
@@ -414,17 +544,17 @@ export default function App() {
       {/* App Grid Overlay (Launchpad) */}
       {isAppGridOpen && (
         <div 
-          className="absolute inset-0 z-[60] bg-white/30 dark:bg-black/40 backdrop-blur-2xl flex flex-col animate-fadeIn"
+          className={`absolute inset-0 z-[60] backdrop-blur-2xl flex flex-col animate-fadeIn transition-colors duration-300 ${isDarkMode ? 'bg-black/40' : 'bg-white/80'}`}
           onClick={() => setIsAppGridOpen(false)}
         >
            {/* Search Bar */}
            <div className="mt-20 w-full max-w-xl mx-auto px-4" onClick={(e) => e.stopPropagation()}>
                <div className="relative">
-                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                   <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} size={20} />
                    <input 
                       type="text" 
                       placeholder="Search" 
-                      className="w-full bg-white/20 border border-white/20 rounded-lg py-2 pl-10 pr-4 text-white placeholder-gray-300 focus:outline-none focus:bg-white/30 shadow-xl"
+                      className={`w-full border rounded-lg py-2 pl-10 pr-4 placeholder-gray-500 focus:outline-none shadow-xl transition-colors ${isDarkMode ? 'bg-white/20 border-white/20 text-white focus:bg-white/30' : 'bg-black/5 border-black/10 text-black focus:bg-black/10'}`}
                    />
                </div>
            </div>
@@ -444,7 +574,7 @@ export default function App() {
                                    {app.icon}
                                </div>
                            </div>
-                           <span className="text-white font-medium text-sm shadow-black drop-shadow-md">{app.title}</span>
+                           <span className={`font-medium text-sm drop-shadow-md transition-colors ${isDarkMode ? 'text-white shadow-black' : 'text-black'}`}>{app.title}</span>
                        </button>
                    ))}
                </div>
