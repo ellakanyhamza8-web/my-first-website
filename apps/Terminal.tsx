@@ -27,7 +27,6 @@ export const TerminalApp: React.FC<TerminalProps> = ({ onClose, lang }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Reset history on lang change (optional, but good for consistency)
   useEffect(() => {
      setHistory([
         { type: 'output', content: t.termWelcome },
@@ -157,10 +156,11 @@ ossyNMMMNyMMhsssssssssssshmmmhssssssso     WM: Mutter
   };
 
   return (
-    <div className="h-full bg-[#300a24] text-white font-mono p-4 flex flex-col text-sm" dir="ltr" onClick={() => inputRef.current?.focus()}>
-      <div className="flex-1 overflow-auto whitespace-pre-wrap font-mono">
+    // Note: Background is handled by Window.tsx for acrylic effect, this div is transparent
+    <div className="h-full bg-transparent text-gray-200 font-mono p-4 flex flex-col text-sm" dir="ltr" onClick={() => inputRef.current?.focus()}>
+      <div className="flex-1 overflow-auto whitespace-pre-wrap font-mono scrollbar-hide">
         {history.map((entry, i) => (
-          <div key={i} className={`mb-1 ${entry.type === 'error' ? 'text-red-400' : entry.type === 'command' ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
+          <div key={i} className={`mb-1 ${entry.type === 'error' ? 'text-red-400' : entry.type === 'command' ? 'text-green-400 font-bold' : 'text-gray-300'} drop-shadow-sm`}>
             {entry.type === 'command' && <span className="text-[#87A922] mr-2">hamza@ubuntu:~$</span>}
             {entry.content}
           </div>
@@ -168,15 +168,15 @@ ossyNMMMNyMMhsssssssssssshmmmhssssssso     WM: Mutter
         {isProcessing && <div className="text-gray-400 animate-pulse">{t.termProcessing}</div>}
         <div ref={bottomRef} />
       </div>
-      <div className="flex items-center mt-2 border-t border-gray-700 pt-2">
-        <span className="text-[#87A922] mr-2">hamza@ubuntu:~$</span>
+      <div className="flex items-center mt-2 border-t border-gray-600/30 pt-2">
+        <span className="text-[#87A922] mr-2 font-bold">hamza@ubuntu:~$</span>
         <input
           ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleCommand(input)}
-          className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0"
+          className="flex-1 bg-transparent border-none outline-none text-white focus:ring-0 placeholder-gray-600"
           autoFocus
           autoComplete="off"
         />

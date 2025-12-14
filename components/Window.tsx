@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppID, WindowState } from '../types';
+import { Minus, Square, X, Copy } from 'lucide-react';
 
 interface WindowProps {
   windowState: WindowState;
@@ -21,14 +22,12 @@ export const Window: React.FC<WindowProps> = ({
   const [position, setPosition] = useState(windowState.position);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Handle Resize for Mobile Detection
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Update local position when prop changes
   useEffect(() => {
     setPosition(windowState.position);
   }, [windowState.position]);
@@ -75,24 +74,23 @@ export const Window: React.FC<WindowProps> = ({
   
   if (isMobile) {
     style = {
-      top: '32px',
+      top: '0',
       left: 0,
       right: 0,
-      bottom: '80px', // More space for floating dock
+      bottom: '100px', // Above Taskbar
       width: '100%',
       height: 'auto',
       borderRadius: 0,
     };
   } else if (windowState.isMaximized) {
     style = {
-      top: '32px',
+      top: '0',
       left: 0,
       right: 0,
-      bottom: '80px', // Space for Dock
-      width: 'auto',
+      bottom: '110px', // Above Large Floating Taskbar (Raised position)
+      width: '100%',
       height: 'auto',
-      borderRadius: '12px',
-      margin: '0 8px',
+      borderRadius: 0,
     };
   } else {
     style = {
@@ -104,50 +102,52 @@ export const Window: React.FC<WindowProps> = ({
     };
   }
 
+  const isTerminal = windowState.id === AppID.TERMINAL;
+
   return (
     <div
-      className="absolute bg-white dark:bg-[#1e1e1e] flex flex-col overflow-hidden shadow-2xl transition-colors duration-300"
-      style={{ ...style, zIndex: windowState.zIndex, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}
+      className={`absolute flex flex-col overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.4)] transition-opacity duration-200 animate-scaleIn border border-gray-200 dark:border-gray-700
+      ${isTerminal ? 'bg-[#1e1e1e]/95 backdrop-blur-md' : 'bg-[#f9f9f9] dark:bg-[#202020]'}
+      `}
+      style={{ ...style, zIndex: windowState.zIndex }}
       onMouseDown={() => onFocus(windowState.id)}
-      dir="ltr" // Force LTR for layout consistency of window controls
+      dir="ltr" 
     >
-      {/* macOS Title Bar */}
+      {/* Windows 11 Title Bar (Mica Effect) */}
       <div
-        className="h-10 bg-[#f0f0f0] dark:bg-[#2d2d2d] border-b border-gray-200 dark:border-black flex items-center justify-between px-4 cursor-default select-none rounded-t-xl"
+        className={`h-10 flex items-center justify-between select-none
+        ${isTerminal ? 'bg-transparent text-gray-300' : 'bg-white/50 dark:bg-[#2c2c2c] text-black dark:text-white backdrop-blur-sm'}`}
         onMouseDown={handleMouseDown}
       >
-        {/* Traffic Lights (Left Side) */}
-        <div className="flex space-x-2 items-center group">
-           <button
-            onClick={(e) => { e.stopPropagation(); onClose(windowState.id); }}
-            className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] flex items-center justify-center hover:brightness-90 transition-all"
-          >
-             <span className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-black/50">×</span>
-          </button>
+        {/* Title & Icon */}
+        <div className="flex-1 px-4 text-xs flex items-center gap-2 overflow-hidden">
+            <span className="font-semibold opacity-80 truncate">{windowState.title}</span>
+        </div>
+
+        {/* Windows Controls (Right Aligned) */}
+        <div className="flex h-full items-start">
           <button
             onClick={(e) => { e.stopPropagation(); onMinimize(windowState.id); }}
-            className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] flex items-center justify-center hover:brightness-90 transition-all"
+            className="w-12 h-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
-             <span className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-black/50">−</span>
+             <Minus size={14} strokeWidth={1.5} />
           </button>
           <button
-            className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] flex items-center justify-center hover:brightness-90 transition-all"
+            className="w-12 h-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
-             <span className="opacity-0 group-hover:opacity-100 text-[6px] font-bold text-black/50">sw</span>
+             {windowState.isMaximized ? <Copy size={12} strokeWidth={1.5} /> : <Square size={12} strokeWidth={1.5} />}
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onClose(windowState.id); }}
+            className="w-12 h-full flex items-center justify-center hover:bg-[#c42b1c] hover:text-white transition-colors group rounded-tr-lg"
+          >
+             <X size={14} strokeWidth={1.5} />
           </button>
         </div>
-
-        {/* Title */}
-        <div className="text-gray-700 dark:text-gray-300 text-sm font-semibold flex-1 text-center">
-            {windowState.title}
-        </div>
-
-        {/* Spacer to balance title */}
-        <div className="w-14"></div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 bg-white dark:bg-[#1a1a1a] dark:text-gray-200 overflow-auto relative text-gray-900 transition-colors duration-300">
+      <div className={`flex-1 overflow-auto relative ${isTerminal ? 'bg-transparent' : 'bg-white dark:bg-[#1a1a1a]'}`}>
         {children}
       </div>
     </div>

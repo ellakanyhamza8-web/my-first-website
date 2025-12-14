@@ -70,14 +70,8 @@ export const FilesApp: React.FC<FilesAppProps> = ({ lang }) => {
     ];
 
     const navigateTo = (folderName: string) => {
-        // If it's a known path in fileSystem root or a subfolder of current
-        // For simplicity in this demo, we flatten navigation or check existence
         let newPath = folderName;
-        // Simple logic: if folderName exists in keys, go there. 
         if (!fileSystem[folderName]) {
-             // It might be a subfolder not fully implemented in the root keys for this demo, 
-             // but let's assume if clicked from current view, it works if defined
-             // For the demo, we only navigate to top-level keys or clear subfolders
              newPath = folderName;
         }
 
@@ -106,25 +100,25 @@ export const FilesApp: React.FC<FilesAppProps> = ({ lang }) => {
 
     const getIcon = (type: FileType) => {
         switch (type) {
-            case 'folder': return <Folder size={48} className="text-[#E95420] fill-[#E95420]/20" />;
+            case 'folder': return <Folder size={48} className="text-[#FCD34D] fill-[#FCD34D]" />;
             case 'image': return <ImageIcon size={48} className="text-purple-500" />;
-            case 'audio': return <Music size={48} className="text-blue-500" />;
-            default: return <FileText size={48} className="text-gray-500" />;
+            case 'audio': return <Music size={48} className="text-pink-500" />;
+            default: return <FileText size={48} className="text-blue-400" />;
         }
     };
 
     return (
-        <div className="flex h-full bg-[#f7f7f7] dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-200" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-            {/* Sidebar */}
-            <div className="w-48 md:w-56 bg-[#f0f0f0] dark:bg-[#252526] border-r dark:border-black flex flex-col py-4">
+        <div className="flex h-full bg-white/60 dark:bg-[#111]/80 backdrop-blur-xl text-gray-800 dark:text-gray-200" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            {/* Glass Sidebar */}
+            <div className="w-56 bg-gray-50/50 dark:bg-[#1a1a1a]/50 border-r border-gray-200/50 dark:border-white/5 flex flex-col py-4 backdrop-blur-md">
                 {sidebarItems.map(item => (
                     <button
                         key={item.id}
                         onClick={() => navigateTo(item.id)}
-                        className={`flex items-center space-x-3 space-x-reverse px-4 py-2 mx-2 rounded-lg transition-colors ${currentPath === item.id ? 'bg-[#E95420] text-white' : 'hover:bg-gray-200 dark:hover:bg-[#333]'}`}
+                        className={`flex items-center space-x-3 space-x-reverse px-4 py-2 mx-2 rounded-lg transition-all ${currentPath === item.id ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold' : 'hover:bg-gray-200/50 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400'}`}
                     >
                         {item.icon}
-                        <span className="text-sm font-medium">{item.label}</span>
+                        <span className="text-sm">{item.label}</span>
                     </button>
                 ))}
             </div>
@@ -132,48 +126,49 @@ export const FilesApp: React.FC<FilesAppProps> = ({ lang }) => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
                 {/* Header/Toolbar */}
-                <div className="h-12 border-b dark:border-black flex items-center px-4 space-x-4 space-x-reverse bg-white dark:bg-[#1e1e1e]">
-                    <div className="flex items-center bg-gray-100 dark:bg-[#2d2d2d] rounded-lg p-1">
-                        <button onClick={navigateBack} disabled={historyIndex === 0} className="p-1 rounded hover:bg-white dark:hover:bg-[#444] disabled:opacity-30">
-                            <ChevronLeft size={16} className={lang === 'ar' ? 'rotate-180' : ''} />
+                <div className="h-14 border-b border-gray-200/50 dark:border-white/5 flex items-center px-6 space-x-4 space-x-reverse">
+                    <div className="flex items-center space-x-2">
+                        <button onClick={navigateBack} disabled={historyIndex === 0} className="p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 disabled:opacity-30 transition-colors">
+                            <ChevronLeft size={18} className={lang === 'ar' ? 'rotate-180' : ''} />
                         </button>
-                        <button onClick={navigateForward} disabled={historyIndex === history.length - 1} className="p-1 rounded hover:bg-white dark:hover:bg-[#444] disabled:opacity-30">
-                            <ChevronRight size={16} className={lang === 'ar' ? 'rotate-180' : ''} />
+                        <button onClick={navigateForward} disabled={historyIndex === history.length - 1} className="p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 disabled:opacity-30 transition-colors">
+                            <ChevronRight size={18} className={lang === 'ar' ? 'rotate-180' : ''} />
                         </button>
                     </div>
                     
-                    <div className="flex-1 bg-gray-100 dark:bg-[#2d2d2d] rounded-lg px-4 py-1.5 text-sm font-medium flex items-center text-gray-600 dark:text-gray-300">
+                    <div className="flex-1 bg-gray-100 dark:bg-[#2d2d2d] rounded-md px-4 py-2 text-sm flex items-center text-gray-600 dark:text-gray-300 shadow-inner">
+                        <Home size={14} className="mr-2 opacity-50" />
                         {lang === 'ar' ? '/ ' : ''}{currentPath}{lang !== 'ar' ? ' /' : ''}
                     </div>
 
-                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-[#2d2d2d] rounded">
-                        <Search size={18} />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-[#2d2d2d] rounded">
-                        <List size={18} />
-                    </button>
+                    <div className="flex items-center space-x-2">
+                        <div className="relative">
+                            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 opacity-50" />
+                            <input type="text" placeholder="Search" className="pl-9 pr-3 py-1.5 bg-gray-100 dark:bg-[#2d2d2d] rounded-md text-sm outline-none focus:ring-1 focus:ring-blue-500" />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Grid View */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-6">
                     {currentItems.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-gray-400">
                             <Folder size={64} className="mb-4 opacity-20" />
-                            <p>{t.emptyFolder}</p>
+                            <p className="text-sm font-medium">{t.emptyFolder}</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-6">
                             {currentItems.map((item, idx) => (
                                 <div 
                                     key={idx}
                                     onDoubleClick={() => item.type === 'folder' ? navigateTo(item.name) : null}
-                                    className="flex flex-col items-center p-4 rounded-lg hover:bg-[#E95420]/10 dark:hover:bg-white/5 cursor-pointer group transition-colors"
+                                    className="flex flex-col items-center p-4 rounded-xl hover:bg-blue-500/10 dark:hover:bg-white/5 cursor-pointer group transition-all duration-200 border border-transparent hover:border-blue-500/20"
                                 >
-                                    <div className="mb-2 transition-transform group-hover:scale-110">
+                                    <div className="mb-3 transition-transform group-hover:scale-105 drop-shadow-md">
                                         {getIcon(item.type)}
                                     </div>
-                                    <span className="text-sm text-center font-medium truncate w-full px-2">{item.name}</span>
-                                    {item.size && <span className="text-xs text-gray-400 mt-1">{item.size}</span>}
+                                    <span className="text-xs text-center font-medium truncate w-full px-2 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">{item.name}</span>
+                                    {item.size && <span className="text-[10px] text-gray-400 mt-1">{item.size}</span>}
                                 </div>
                             ))}
                         </div>

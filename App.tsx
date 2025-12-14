@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { TopBar } from './components/TopBar';
 import { Dock } from './components/Dock';
 import { Window } from './components/Window';
 import { AboutApp } from './apps/About';
@@ -12,30 +11,97 @@ import { TextEditorApp } from './apps/TextEditor';
 import { ChessApp } from './apps/Chess';
 import { LudoApp } from './apps/Ludo';
 import { UnoApp } from './apps/Uno';
+import { GameCenterApp } from './apps/GameCenter';
+import { DevStudioApp } from './apps/DevStudio';
+import { OfficeApp } from './apps/Office'; // Import Office
+import { OdooApp } from './apps/Odoo';     // Import Odoo
 import { AndroidView } from './components/AndroidView';
 import { LockScreen } from './components/LockScreen';
+import { Copilot } from './components/Copilot';
 import { AppID, AppConfig, WindowState, Language } from './types';
 import { translations } from './utils/translations';
 import { 
-    Terminal, User, Youtube, Code, Settings, Volume2, Wifi, Bluetooth, Battery, Power, 
-    Sun, Moon, Lock, Bell, Search, Folder, Calculator, FileText, Smartphone,
-    Gamepad2, Swords, Layers, VolumeX, WifiOff, BluetoothOff
+    Terminal, Youtube, Code, Settings, Volume2, Wifi, Bluetooth, Battery, 
+    Sun, Moon, Lock, Bell, Search, Calculator, FileText, Smartphone,
+    Gamepad2, Swords, Layers, WifiOff, BluetoothOff, Laptop2,
+    LayoutGrid, MonitorPlay, FolderOpen, PowerOff, User, ArrowRight,
+    Table, Presentation, Database // New Icons
 } from 'lucide-react';
 
 const INITIAL_WINDOWS: Record<string, WindowState> = {
   [AppID.ABOUT]: {
     id: AppID.ABOUT,
-    title: 'About Hamza',
+    title: 'Welcome',
     isOpen: true,
     isMinimized: false,
     isMaximized: false,
     zIndex: 1,
-    position: { x: 100, y: 100 },
-    size: { width: 800, height: 600 },
+    position: { x: 100, y: 50 },
+    size: { width: 900, height: 650 },
+  },
+  [AppID.WORD]: {
+      id: AppID.WORD,
+      title: 'Word',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      position: { x: 80, y: 50 },
+      size: { width: 900, height: 700 },
+  },
+  [AppID.EXCEL]: {
+      id: AppID.EXCEL,
+      title: 'Excel',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      position: { x: 100, y: 80 },
+      size: { width: 900, height: 700 },
+  },
+  [AppID.POWERPOINT]: {
+      id: AppID.POWERPOINT,
+      title: 'PowerPoint',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      position: { x: 120, y: 110 },
+      size: { width: 900, height: 700 },
+  },
+  [AppID.ODOO]: {
+      id: AppID.ODOO,
+      title: 'Odoo',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      position: { x: 140, y: 60 },
+      size: { width: 1000, height: 700 },
+  },
+  [AppID.GAMECENTER]: {
+    id: AppID.GAMECENTER,
+    title: 'Xbox Games',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 1,
+    position: { x: 120, y: 50 },
+    size: { width: 900, height: 650 },
+  },
+  [AppID.DEVSTUDIO]: {
+    id: AppID.DEVSTUDIO,
+    title: 'Dev Studio',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 1,
+    position: { x: 150, y: 80 },
+    size: { width: 900, height: 700 },
   },
   [AppID.TERMINAL]: {
     id: AppID.TERMINAL,
-    title: 'hamza@macbook: ~',
+    title: 'PowerShell',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -45,7 +111,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.PROJECTS]: {
     id: AppID.PROJECTS,
-    title: 'VS Code - Projects',
+    title: 'VS Code',
     isOpen: false,
     isMinimized: false,
     isMaximized: true,
@@ -55,7 +121,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.FILES]: {
       id: AppID.FILES,
-      title: 'Finder',
+      title: 'File Explorer',
       isOpen: false,
       isMinimized: false,
       isMaximized: false,
@@ -75,7 +141,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.EDITOR]: {
       id: AppID.EDITOR,
-      title: 'Notes',
+      title: 'Notepad',
       isOpen: false,
       isMinimized: false,
       isMaximized: false,
@@ -85,7 +151,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.YOUTUBE]: {
       id: AppID.YOUTUBE,
-      title: 'Safari - Hamza Full HD',
+      title: 'Edge - Hamza TV',
       isOpen: false,
       isMinimized: false,
       isMaximized: false,
@@ -95,7 +161,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.SETTINGS]: {
     id: AppID.SETTINGS,
-    title: 'System Preferences',
+    title: 'Settings',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -105,7 +171,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.CHESS]: {
     id: AppID.CHESS,
-    title: 'Chess',
+    title: 'Chess Titans',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -115,7 +181,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.LUDO]: {
     id: AppID.LUDO,
-    title: 'Ludo',
+    title: 'Ludo Star',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -125,7 +191,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
   },
   [AppID.UNO]: {
     id: AppID.UNO,
-    title: 'UNO',
+    title: 'UNO Online',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -139,17 +205,21 @@ export default function App() {
   const [windows, setWindows] = useState<Record<string, WindowState>>(INITIAL_WINDOWS);
   const [activeAppId, setActiveAppId] = useState<AppID | null>(AppID.ABOUT);
   const [maxZIndex, setMaxZIndex] = useState(10);
-  const [wallpaper, setWallpaper] = useState('bg-gradient-to-br from-[#c62368] via-[#d74c6d] to-[#0072bc]');
+  const [wallpaper, setWallpaper] = useState("bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')]");
   
   const [lang, setLang] = useState<Language>('ar');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAndroidMode, setIsAndroidMode] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  
+  // Selection State for Desktop Icons
+  const [selectedDesktopIcon, setSelectedDesktopIcon] = useState<AppID | null>(null);
 
   // New Interactive States
   const [isSystemMenuOpen, setIsSystemMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAppGridOpen, setIsAppGridOpen] = useState(false);
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false); 
 
   // System Controls State
   const [wifiEnabled, setWifiEnabled] = useState(true);
@@ -157,7 +227,8 @@ export default function App() {
   const [brightness, setBrightness] = useState(100);
   const [volume, setVolume] = useState(70);
 
-  // Apply Language Direction and Theme Class
+  const [browserGameUrl, setBrowserGameUrl] = useState<{url: string, title: string} | null>(null);
+
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
@@ -170,26 +241,77 @@ export default function App() {
 
   const t = translations[lang];
 
-  // Enhanced Icon Styles
-  const iconBaseClass = "w-full h-full rounded-[18px] flex items-center justify-center text-white shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.4)] bg-gradient-to-br border border-white/10";
-
+  // Windows 11 Style Icons
   const APPS: AppConfig[] = [
     {
-        id: AppID.ANDROID,
-        title: t.androidApp,
-        icon: <div className={`${iconBaseClass} from-[#11998e] to-[#38ef7d]`}><Smartphone size={32} className="text-white drop-shadow-md" /></div>,
-        component: null, // Handled separately
+      id: AppID.ABOUT,
+      title: t.aboutApp,
+      icon: <LayoutGrid className="text-blue-500" />, 
+      component: <AboutApp lang={lang} />,
+    },
+    // Office Apps
+    {
+      id: AppID.WORD,
+      title: t.wordApp,
+      icon: <div className="w-full h-full bg-[#2B579A] rounded-lg flex items-center justify-center shadow-md relative overflow-hidden group">
+              <div className="absolute right-0 bottom-0 w-8 h-8 bg-black/10 rounded-tl-full"></div>
+              <FileText className="text-white relative z-10" />
+              <span className="absolute bottom-1 right-1 text-[8px] text-white font-bold opacity-50">W</span>
+            </div>,
+      component: <OfficeApp type="word" />,
+    },
+    {
+      id: AppID.EXCEL,
+      title: t.excelApp,
+      icon: <div className="w-full h-full bg-[#217346] rounded-lg flex items-center justify-center shadow-md relative overflow-hidden group">
+              <div className="absolute right-0 bottom-0 w-8 h-8 bg-black/10 rounded-tl-full"></div>
+              <Table className="text-white relative z-10" />
+              <span className="absolute bottom-1 right-1 text-[8px] text-white font-bold opacity-50">X</span>
+            </div>,
+      component: <OfficeApp type="excel" />,
+    },
+    {
+      id: AppID.POWERPOINT,
+      title: t.powerpointApp,
+      icon: <div className="w-full h-full bg-[#B7472A] rounded-lg flex items-center justify-center shadow-md relative overflow-hidden group">
+              <div className="absolute right-0 bottom-0 w-8 h-8 bg-black/10 rounded-tl-full"></div>
+              <Presentation className="text-white relative z-10" />
+              <span className="absolute bottom-1 right-1 text-[8px] text-white font-bold opacity-50">P</span>
+            </div>,
+      component: <OfficeApp type="powerpoint" />,
+    },
+    {
+      id: AppID.ODOO,
+      title: t.odooApp,
+      icon: <div className="w-full h-full bg-[#714B67] rounded-lg flex items-center justify-center shadow-md border-b-2 border-[#5a3b52] font-bold text-white tracking-tighter">odoo</div>,
+      component: <OdooApp />,
+    },
+    {
+        id: AppID.GAMECENTER,
+        title: t.gameCenterApp,
+        icon: <div className="w-full h-full bg-[#107C10] rounded-lg flex items-center justify-center shadow-md"><Gamepad2 className="text-white" /></div>,
+        component: <GameCenterApp 
+                      lang={lang} 
+                      onLaunch={(id) => handleAppClick(id)} 
+                      onLaunchUrl={(url, title) => setBrowserGameUrl({url, title})}
+                   />,
+    },
+    {
+        id: AppID.DEVSTUDIO,
+        title: t.devStudioApp,
+        icon: <div className="w-full h-full bg-black rounded-lg flex items-center justify-center shadow-md"><Laptop2 className="text-white" /></div>,
+        component: <DevStudioApp lang={lang} />,
     },
     {
         id: AppID.FILES,
         title: t.filesApp,
-        icon: <div className={`${iconBaseClass} from-[#007AFF] to-[#0055B3]`}><Folder size={32} className="fill-white/20 text-white" /></div>,
+        icon: <div className="w-full h-full bg-[#FE9C28] rounded-lg flex items-center justify-center shadow-md border-b-2 border-[#d98218]"><FolderOpen className="text-white" /></div>,
         component: <FilesApp lang={lang} />,
     },
     {
         id: AppID.YOUTUBE,
         title: t.youtubeApp,
-        icon: <div className={`${iconBaseClass} from-[#FF0000] to-[#CC0000]`}><Youtube size={32} className="fill-white" /></div>,
+        icon: <div className="w-full h-full bg-red-600 rounded-lg flex items-center justify-center shadow-md"><MonitorPlay className="text-white" /></div>,
         component: (
           <div className="w-full h-full flex flex-col bg-white dark:bg-[#111] dark:text-gray-100" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
               <div className="bg-gray-100 dark:bg-[#333] p-2 border-b dark:border-gray-700 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
@@ -211,58 +333,58 @@ export default function App() {
           </div>
         ),
       },
+      {
+        id: AppID.PROJECTS,
+        title: t.projectsApp,
+        icon: <div className="w-full h-full bg-[#007ACC] rounded-lg flex items-center justify-center shadow-md"><Code className="text-white" /></div>,
+        component: <ProjectsApp lang={lang} />,
+    },
     {
         id: AppID.CHESS,
         title: t.chessApp,
-        icon: <div className={`${iconBaseClass} from-[#2c3e50] to-[#4ca1af]`}><Swords size={32} /></div>,
+        icon: <div className="w-full h-full bg-gradient-to-br from-green-600 to-green-800 rounded-lg flex items-center justify-center shadow-md"><Swords className="text-white" /></div>,
         component: <ChessApp lang={lang} />,
     },
     {
         id: AppID.LUDO,
         title: t.ludoApp,
-        icon: <div className={`${iconBaseClass} from-[#8e2de2] to-[#4a00e0]`}><Gamepad2 size={32} /></div>,
+        icon: <div className="w-full h-full bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center shadow-md"><Gamepad2 className="text-white" /></div>,
         component: <LudoApp lang={lang} />,
     },
     {
         id: AppID.UNO,
         title: t.unoApp,
-        icon: <div className={`${iconBaseClass} from-[#f12711] to-[#f5af19]`}><Layers size={32} className="rotate-90" /></div>,
+        icon: <div className="w-full h-full bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md"><Layers className="rotate-90 text-white" /></div>,
         component: <UnoApp lang={lang} />,
-    },
-    {
-      id: AppID.ABOUT,
-      title: t.aboutApp,
-      icon: <div className={`${iconBaseClass} from-[#8E8E93] to-[#48484A]`}><User size={32} /></div>,
-      component: <AboutApp lang={lang} />,
     },
     {
       id: AppID.TERMINAL,
       title: t.terminalApp,
-      icon: <div className={`${iconBaseClass} from-[#2c2c2e] to-[#000000]`}><Terminal size={32} className="text-[#00ff00]" /></div>,
+      icon: <div className="w-full h-full bg-[#4d4d4d] rounded-lg flex items-center justify-center shadow-md"><Terminal className="text-white" /></div>,
       component: <TerminalApp onClose={() => closeApp(AppID.TERMINAL)} lang={lang} />,
-    },
-    {
-        id: AppID.PROJECTS,
-        title: t.projectsApp,
-        icon: <div className={`${iconBaseClass} from-[#007ACC] to-[#005A9C]`}><Code size={32} /></div>,
-        component: <ProjectsApp lang={lang} />,
     },
     {
         id: AppID.CALCULATOR,
         title: t.calculatorApp,
-        icon: <div className={`${iconBaseClass} from-[#FF9500] to-[#E08400]`}><Calculator size={32} /></div>,
+        icon: <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center shadow-md"><Calculator className="text-black dark:text-white" /></div>,
         component: <CalculatorApp lang={lang} />,
     },
     {
         id: AppID.EDITOR,
         title: t.editorApp,
-        icon: <div className={`${iconBaseClass} from-[#FFD60A] to-[#D4AF37]`}><FileText size={32} /></div>,
+        icon: <div className="w-full h-full bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center shadow-md"><FileText className="text-blue-600 dark:text-blue-300" /></div>,
         component: <TextEditorApp lang={lang} />,
+    },
+    {
+        id: AppID.ANDROID,
+        title: t.androidApp,
+        icon: <div className="w-full h-full bg-green-500 rounded-lg flex items-center justify-center shadow-md"><Smartphone className="text-white" /></div>,
+        component: null, // Handled separately
     },
     {
       id: AppID.SETTINGS,
       title: t.settingsApp,
-      icon: <div className={`${iconBaseClass} from-[#AEAEB2] to-[#636366]`}><Settings size={32} className="text-gray-100 animate-spin-slow" /></div>,
+      icon: <div className="w-full h-full bg-gray-400 dark:bg-gray-600 rounded-lg flex items-center justify-center shadow-md"><Settings className="text-white animate-spin-slow" /></div>,
       component: <SettingsApp 
                     currentWallpaper={wallpaper} 
                     onWallpaperChange={setWallpaper} 
@@ -275,16 +397,20 @@ export default function App() {
   ];
 
   const handleAppClick = (id: AppID) => {
-    // Close App Grid if open
-    if (isAppGridOpen) setIsAppGridOpen(false);
+    if (id === AppID.ABOUT) {
+        setIsAppGridOpen(!isAppGridOpen);
+        setIsSystemMenuOpen(false);
+        setIsCalendarOpen(false);
+        return;
+    }
+
+    setIsAppGridOpen(false);
     
-    // Switch to Android Mode
     if (id === AppID.ANDROID) {
         setIsAndroidMode(true);
         return;
     }
 
-    // If in Android Mode, just set active app id
     if (isAndroidMode) {
       setActiveAppId(id);
       return;
@@ -297,6 +423,10 @@ export default function App() {
       
       if (window && window.isOpen && !window.isMinimized && activeAppId === id) {
           return { ...prev, [id]: { ...window, isMinimized: true } };
+      }
+      
+      if (window && window.isMinimized) {
+          return { ...prev, [id]: { ...window, isMinimized: false, zIndex: newZ } };
       }
 
       // Create window if it doesn't exist (though INITIAL_WINDOWS handles most)
@@ -354,18 +484,38 @@ export default function App() {
     setActiveAppId(null);
   };
 
-  // Close menus when clicking outside
-  const handleOutsideClick = () => {
-    if (isSystemMenuOpen) setIsSystemMenuOpen(false);
-    if (isCalendarOpen) setIsCalendarOpen(false);
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    // Clear selection if clicking on desktop area but not on an icon
+    if (target.id === 'desktop-area') {
+        setSelectedDesktopIcon(null);
+        if (isSystemMenuOpen) setIsSystemMenuOpen(false);
+        if (isCalendarOpen) setIsCalendarOpen(false);
+        if (isAppGridOpen) setIsAppGridOpen(false);
+    }
   };
 
-  // Lock Screen
   if (isLocked) {
       return <LockScreen onUnlock={() => setIsLocked(false)} lang={lang} wallpaper={wallpaper} />;
   }
 
-  // Android Mode Render
+  if (browserGameUrl) {
+      return (
+          <div className="fixed inset-0 z-[100] bg-black flex flex-col">
+              <div className="h-10 bg-[#333] flex items-center justify-between px-4 text-white border-b border-gray-700">
+                  <span className="font-bold">{browserGameUrl.title}</span>
+                  <button onClick={() => setBrowserGameUrl(null)} className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 text-xs">Exit Game</button>
+              </div>
+              <iframe 
+                src={browserGameUrl.url} 
+                className="flex-1 w-full border-none"
+                title="Browser Game"
+                allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+              />
+          </div>
+      )
+  }
+
   if (isAndroidMode) {
      return (
         <AndroidView 
@@ -380,41 +530,49 @@ export default function App() {
      );
   }
 
-  // Desktop Mode Render
   return (
     <div className="w-screen h-screen overflow-hidden relative bg-black font-sans" onClick={handleOutsideClick}>
-      {/* Brightness Overlay Filter */}
       <div 
          className="absolute inset-0 pointer-events-none z-[100] bg-black transition-opacity duration-100" 
          style={{ opacity: (100 - brightness) / 100 }} 
       />
 
-      {/* Wallpaper */}
-      <div className={`absolute inset-0 ${wallpaper} transition-all duration-700 z-0 bg-cover bg-center`} />
-      
-      {/* Top Bar */}
-      <TopBar 
-        lang={lang} 
-        onSystemMenuClick={() => { setTimeout(() => setIsSystemMenuOpen(!isSystemMenuOpen), 0); setIsCalendarOpen(false); }}
-        onCalendarClick={() => { setTimeout(() => setIsCalendarOpen(!isCalendarOpen), 0); setIsSystemMenuOpen(false); }}
-        onActivitiesClick={() => setIsAppGridOpen(true)}
-      />
-      
-      {/* Dock */}
-      <Dock 
-        apps={APPS} 
-        openAppIds={(Object.values(windows) as WindowState[]).filter((w) => w.isOpen).map((w) => w.id)} 
-        activeAppId={activeAppId}
-        onAppClick={handleAppClick}
-        onGridClick={() => setIsAppGridOpen(true)}
+      <div 
+         id="desktop-area"
+         className={`absolute inset-0 ${wallpaper} transition-all duration-700 z-0 bg-cover bg-center`} 
       />
 
-      {/* Windows Area */}
-      <div className="absolute top-8 left-0 right-0 bottom-24 overflow-hidden pointer-events-none">
+      {/* Desktop Shortcut Icons */}
+      <div 
+        className="absolute top-0 left-0 bottom-24 p-2 flex flex-col flex-wrap content-start gap-2 z-10 w-full pointer-events-none"
+        dir={lang === 'ar' ? 'rtl' : 'ltr'}
+      >
+         {APPS.filter(a => a.id !== AppID.ABOUT && a.id !== AppID.ANDROID).map(app => (
+            <div 
+                key={app.id}
+                onDoubleClick={() => handleAppClick(app.id)}
+                onClick={(e) => { e.stopPropagation(); setSelectedDesktopIcon(app.id); }}
+                className={`
+                    w-24 h-28 flex flex-col items-center justify-center p-2 rounded-md border border-transparent hover:bg-white/10 transition-colors cursor-pointer pointer-events-auto
+                    ${selectedDesktopIcon === app.id ? 'bg-white/20 border-white/20' : ''}
+                `}
+            >
+                <div className="w-12 h-12 mb-1 drop-shadow-lg">
+                    {/* Render icon without the background box used in Start Menu/Dock if it has one */}
+                    {app.icon}
+                </div>
+                <span className="text-white text-xs text-center drop-shadow-md line-clamp-2 leading-tight" style={{textShadow: '0 1px 3px rgba(0,0,0,0.8)'}}>
+                    {app.title}
+                </span>
+            </div>
+         ))}
+      </div>
+      
+      <div className="absolute top-0 left-0 right-0 bottom-12 overflow-hidden pointer-events-none">
         <div className="w-full h-full relative pointer-events-auto">
             {APPS.map((app) => {
-              // Skip Android app and unconfigured windows
               if (app.id === AppID.ANDROID) return null;
+              if (app.id === AppID.ABOUT) return null; 
               if (!windows[app.id]) return null;
 
               return (
@@ -432,105 +590,107 @@ export default function App() {
         </div>
       </div>
 
-      {/* System Menu Overlay (Control Center Style) */}
+      <Copilot 
+         isOpen={isCopilotOpen} 
+         onClose={() => setIsCopilotOpen(false)} 
+         lang={lang} 
+      />
+
+      <Dock 
+        apps={APPS.filter(a => a.id !== AppID.ABOUT)} 
+        openAppIds={(Object.values(windows) as WindowState[]).filter((w) => w.isOpen).map((w) => w.id)} 
+        activeAppId={activeAppId}
+        onAppClick={handleAppClick}
+        onStartClick={() => handleAppClick(AppID.ABOUT)}
+        isStartOpen={isAppGridOpen}
+        onSystemClick={() => { setIsSystemMenuOpen(!isSystemMenuOpen); setIsCalendarOpen(false); setIsAppGridOpen(false); }}
+        onClockClick={() => { setIsCalendarOpen(!isCalendarOpen); setIsSystemMenuOpen(false); setIsAppGridOpen(false); }}
+        lang={lang}
+        onCopilotClick={() => setIsCopilotOpen(!isCopilotOpen)}
+        isCopilotOpen={isCopilotOpen}
+      />
+
       {isSystemMenuOpen && (
         <div 
           onClick={(e) => e.stopPropagation()}
-          className={`absolute top-10 ${lang === 'ar' ? 'left-2' : 'right-2'} w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-4 text-black dark:text-white z-50 border border-white/20`}
+          className={`absolute bottom-[92px] ${lang === 'ar' ? 'left-4' : 'right-4'} w-80 bg-[#f3f3f3]/95 dark:bg-[#202020]/95 backdrop-blur-2xl rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] p-4 text-black dark:text-white z-50 border border-white/20 animate-in slide-in-from-bottom-10 fade-in duration-200`}
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
-          {/* Toggles */}
           <div className="grid grid-cols-2 gap-3 mb-4">
              <div 
                 onClick={() => setWifiEnabled(!wifiEnabled)}
-                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${wifiEnabled ? 'bg-white/70 dark:bg-gray-700' : 'bg-white/30 dark:bg-gray-800/50'}`}
+                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${wifiEnabled ? 'bg-blue-600 text-white' : 'bg-white/50 dark:bg-gray-700'}`}
              >
-                <div className={`p-2 rounded-full text-white transition-colors ${wifiEnabled ? 'bg-blue-500' : 'bg-gray-500'}`}>
-                    {wifiEnabled ? <Wifi size={18} /> : <WifiOff size={18} />}
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-sm font-bold">{t.wifi}</span>
-                    <span className="text-xs opacity-70">{wifiEnabled ? 'Hamza-5G' : 'Off'}</span>
-                </div>
+                {wifiEnabled ? <Wifi size={20} /> : <WifiOff size={20} />}
+                <span className="text-sm font-medium">{t.wifi}</span>
              </div>
              <div 
                 onClick={() => setBluetoothEnabled(!bluetoothEnabled)}
-                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${bluetoothEnabled ? 'bg-white/70 dark:bg-gray-700' : 'bg-white/30 dark:bg-gray-800/50'}`}
+                className={`p-3 rounded-xl flex items-center space-x-3 space-x-reverse cursor-pointer transition ${bluetoothEnabled ? 'bg-blue-600 text-white' : 'bg-white/50 dark:bg-gray-700'}`}
              >
-                <div className={`p-2 rounded-full text-white transition-colors ${bluetoothEnabled ? 'bg-blue-500' : 'bg-gray-500'}`}>
-                    {bluetoothEnabled ? <Bluetooth size={18} /> : <BluetoothOff size={18} />}
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-sm font-bold">{t.bluetooth}</span>
-                    <span className="text-xs opacity-70">{bluetoothEnabled ? 'On' : 'Off'}</span>
-                </div>
+                {bluetoothEnabled ? <Bluetooth size={20} /> : <BluetoothOff size={20} />}
+                <span className="text-sm font-medium">{t.bluetooth}</span>
              </div>
           </div>
 
-          <div className="bg-white/50 dark:bg-gray-800/80 p-4 rounded-xl mb-4 space-y-4">
-               {/* Brightness */}
+          <div className="bg-white/50 dark:bg-gray-700/50 p-4 rounded-xl mb-4 space-y-4">
                <div className="flex items-center space-x-3 space-x-reverse">
-                    <span className="text-xs font-medium w-6 text-center text-gray-600 dark:text-gray-300"><Sun size={16} /></span>
+                    <Sun size={18} />
                     <input 
                         type="range" 
                         min="20" 
                         max="100" 
                         value={brightness}
                         onChange={(e) => setBrightness(parseInt(e.target.value))}
-                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-600" 
                     />
                </div>
-               {/* Volume */}
                <div className="flex items-center space-x-3 space-x-reverse">
-                    <span className="text-xs font-medium w-6 text-center text-gray-600 dark:text-gray-300">
-                        {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                    </span>
+                    <Volume2 size={18} />
                     <input 
                         type="range" 
                         min="0" 
                         max="100" 
                         value={volume}
                         onChange={(e) => setVolume(parseInt(e.target.value))}
-                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+                        className="flex-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-600" 
                     />
                </div>
           </div>
           
-          <div className="flex justify-between items-center bg-white/50 dark:bg-gray-800/80 p-2 rounded-xl">
-             <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 hover:bg-black/10 rounded-full transition text-gray-800 dark:text-white">
-                 {isDarkMode ? <Moon size={20}/> : <Sun size={20} />}
-             </button>
-             <button onClick={() => setIsLocked(true)} className="p-2 hover:bg-black/10 rounded-full transition text-gray-800 dark:text-white">
+          <div className="flex justify-between items-center px-2">
+             <div className="flex gap-2">
+                <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition text-gray-800 dark:text-white">
+                    {isDarkMode ? <Moon size={20}/> : <Sun size={20} />}
+                </button>
+             </div>
+             <button onClick={() => setIsLocked(true)} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition text-gray-800 dark:text-white">
                  <Lock size={20} />
-             </button>
-             <button onClick={() => window.location.reload()} className="p-2 hover:bg-red-500/20 text-red-500 rounded-full transition">
-                 <Power size={20} />
              </button>
           </div>
         </div>
       )}
 
-      {/* Calendar Overlay */}
       {isCalendarOpen && (
         <div 
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-10 left-1/2 transform -translate-x-1/2 w-80 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 border border-white/20 overflow-hidden text-black dark:text-white flex flex-col"
+          className={`absolute bottom-[92px] ${lang === 'ar' ? 'left-4' : 'right-4'} w-80 bg-[#f3f3f3]/95 dark:bg-[#202020]/95 backdrop-blur-2xl rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] z-50 border border-white/20 overflow-hidden text-black dark:text-white flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-200`}
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
           <div className="p-4 flex-1">
              <div className="flex justify-between items-center mb-4">
                  <h3 className="font-bold text-lg">{new Date().toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric'})}</h3>
              </div>
-             {/* Simple Calendar Grid Mockup */}
              <div className="grid grid-cols-7 gap-1 text-center text-sm mb-4 font-medium">
                  {['S','M','T','W','T','F','S'].map(d => <span key={d} className="text-gray-500">{d}</span>)}
                  {[...Array(30)].map((_, i) => (
-                    <span key={i} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-blue-500/30 cursor-pointer ${i === new Date().getDate() ? 'bg-red-500 text-white' : ''}`}>{i+1}</span>
+                    <span key={i} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-blue-600 hover:text-white cursor-pointer ${i === new Date().getDate() ? 'bg-blue-600 text-white' : ''}`}>{i+1}</span>
                  ))}
              </div>
              <div className="border-t border-gray-400/20 pt-4">
                  <div className="flex justify-between items-center mb-2">
                     <span className="text-gray-500 text-xs font-bold">{t.notifications}</span>
+                    <button className="text-xs text-blue-500 hover:underline">{t.clear}</button>
                  </div>
                  <div className="text-center py-6 text-gray-500 text-sm">
                      <Bell size={24} className="mx-auto mb-2 opacity-50" />
@@ -541,43 +701,79 @@ export default function App() {
         </div>
       )}
 
-      {/* App Grid Overlay (Launchpad) */}
       {isAppGridOpen && (
         <div 
-          className={`absolute inset-0 z-[60] backdrop-blur-2xl flex flex-col animate-fadeIn transition-colors duration-300 ${isDarkMode ? 'bg-black/40' : 'bg-white/80'}`}
-          onClick={() => setIsAppGridOpen(false)}
+          className={`absolute bottom-[92px] left-1/2 transform -translate-x-1/2 w-[640px] h-[650px] max-w-[95vw] max-h-[75vh] bg-[#f3f3f3]/95 dark:bg-[#202020]/95 backdrop-blur-3xl rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] z-[60] border border-white/20 flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-200`}
+          onClick={(e) => e.stopPropagation()}
+          dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
-           {/* Search Bar */}
-           <div className="mt-20 w-full max-w-xl mx-auto px-4" onClick={(e) => e.stopPropagation()}>
+           <div className="p-6 pb-2">
                <div className="relative">
-                   <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} size={20} />
+                   <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} size={18} />
                    <input 
                       type="text" 
-                      placeholder="Search" 
-                      className={`w-full border rounded-lg py-2 pl-10 pr-4 placeholder-gray-500 focus:outline-none shadow-xl transition-colors ${isDarkMode ? 'bg-white/20 border-white/20 text-white focus:bg-white/30' : 'bg-black/5 border-black/10 text-black focus:bg-black/10'}`}
+                      placeholder={t.copilotPlaceholder}
+                      className={`w-full border-none rounded-full py-3 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm ${isDarkMode ? 'bg-[#2d2d2d] text-white placeholder-gray-400' : 'bg-white text-black placeholder-gray-500'}`}
+                      autoFocus
                    />
                </div>
            </div>
 
-           {/* Grid */}
-           <div className="flex-1 flex items-center justify-center p-8 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-               <div className="grid grid-cols-4 md:grid-cols-6 gap-x-8 gap-y-12">
-                   {APPS.map(app => (
+           <div className="flex-1 px-8 py-4 overflow-y-auto">
+               <div className="flex justify-between items-center mb-4">
+                   <span className="text-sm font-bold opacity-80 dark:text-white">Pinned</span>
+                   <button className="text-xs bg-white/10 px-2 py-1 rounded text-black dark:text-white">All apps &gt;</button>
+               </div>
+               
+               <div className="grid grid-cols-6 gap-6">
+                   {APPS.filter(a => a.id !== AppID.ABOUT).map(app => (
                        <button 
                           key={app.id}
                           onClick={() => handleAppClick(app.id)}
-                          className="flex flex-col items-center group"
+                          className="flex flex-col items-center group gap-2 hover:bg-white/40 dark:hover:bg-white/10 p-2 rounded-xl transition-all active:scale-95"
                        >
-                           <div className="w-20 h-20 rounded-[22px] flex items-center justify-center text-white shadow-2xl mb-3 transition-transform group-hover:scale-110">
-                               {/* Clone icon but force full size as container does styling */}
-                               <div className="w-full h-full transform scale-100 [&>div]:shadow-none [&>div]:border-none">
-                                   {app.icon}
-                               </div>
+                           <div className="w-10 h-10 flex items-center justify-center">
+                               {app.icon}
                            </div>
-                           <span className={`font-medium text-sm drop-shadow-md transition-colors ${isDarkMode ? 'text-white shadow-black' : 'text-black'}`}>{app.title}</span>
+                           <span className={`text-[11px] font-medium text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-black'}`}>{app.title}</span>
                        </button>
                    ))}
                </div>
+
+                <div className="flex justify-between items-center mb-4 mt-8">
+                   <span className="text-sm font-bold opacity-80 dark:text-white">Recommended</span>
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-2 hover:bg-white/40 dark:hover:bg-white/10 rounded-xl cursor-pointer transition-colors">
+                        <div className="text-blue-500 p-2 bg-white/50 rounded-lg"><FileText size={20} /></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold dark:text-white">Resume_Hamza.pdf</span>
+                            <span className="text-[10px] opacity-60 dark:text-gray-300">Recently opened</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 hover:bg-white/40 dark:hover:bg-white/10 rounded-xl cursor-pointer transition-colors">
+                        <div className="text-green-500 p-2 bg-white/50 rounded-lg"><Gamepad2 size={20} /></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold dark:text-white">Ludo Star</span>
+                            <span className="text-[10px] opacity-60 dark:text-gray-300">Recently installed</span>
+                        </div>
+                    </div>
+               </div>
+           </div>
+
+           <div className="h-16 border-t border-gray-300/30 dark:border-white/10 flex items-center justify-between px-10 bg-black/5 dark:bg-black/20 rounded-b-3xl">
+               <div className="flex items-center gap-3 hover:bg-white/40 dark:hover:bg-white/10 p-2 rounded-lg cursor-pointer transition-colors">
+                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
+                       <User size={16} />
+                   </div>
+                   <span className="text-sm font-bold dark:text-white">Hamza</span>
+               </div>
+               <button 
+                  onClick={() => window.location.reload()}
+                  className="p-3 hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-black dark:text-white transition-colors"
+               >
+                   <PowerOff size={18} />
+               </button>
            </div>
         </div>
       )}

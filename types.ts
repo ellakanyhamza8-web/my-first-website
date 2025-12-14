@@ -12,7 +12,13 @@ export enum AppID {
   ANDROID = 'android',
   CHESS = 'chess',
   LUDO = 'ludo',
-  UNO = 'uno'
+  UNO = 'uno',
+  GAMECENTER = 'gamecenter',
+  DEVSTUDIO = 'devstudio',
+  WORD = 'word',
+  EXCEL = 'excel',
+  POWERPOINT = 'powerpoint',
+  ODOO = 'odoo'
 }
 
 export type Language = 'ar' | 'en' | 'zh';

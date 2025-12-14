@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, Volume2, Battery, Search, Command, Smartphone } from 'lucide-react';
+import { Wifi, Volume2, Battery, Search, Command, LayoutGrid } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
 
@@ -31,45 +31,40 @@ export const TopBar: React.FC<TopBarProps> = ({ lang, onSystemMenuClick, onCalen
   };
 
   return (
-    <div className="h-8 bg-white/40 dark:bg-black/40 backdrop-blur-xl text-black dark:text-white flex justify-between items-center px-4 text-xs select-none z-50 w-full fixed top-0 left-0 border-b border-black/5 dark:border-white/10 shadow-sm transition-colors duration-300" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Left Side: Apple Logo & App Menu */}
+    <div className="fixed top-2 left-2 right-2 h-10 bg-white/60 dark:bg-black/40 backdrop-blur-2xl text-black dark:text-white flex justify-between items-center px-4 text-xs select-none z-50 rounded-full border border-white/20 shadow-lg transition-colors duration-300" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Left Side: Windows Logo & App Menu */}
       <div className="flex items-center h-full space-x-4 space-x-reverse font-medium">
         <div 
-            className="font-bold text-lg cursor-pointer hover:opacity-70 transition-opacity px-1"
+            className="font-bold text-lg cursor-pointer hover:bg-blue-500/10 p-1 rounded-md transition-colors text-blue-600 dark:text-blue-400"
             onClick={onActivitiesClick}
         >
-            
+            <LayoutGrid size={20} />
         </div>
-        <div className="font-bold cursor-pointer hidden sm:block">HamzaOS</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">File</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">Edit</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">View</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">Go</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">Window</div>
-        <div className="cursor-pointer hidden sm:block hover:opacity-70 transition-opacity">Help</div>
+        <div className="font-bold cursor-pointer hidden sm:block opacity-80">Windows 12 Pro</div>
       </div>
 
-      {/* Center: Clock/Date */}
+      {/* Center: Search / Status */}
       <div 
-          className="absolute left-1/2 transform -translate-x-1/2 font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 px-3 py-1 rounded transition-colors z-20"
+          className="absolute left-1/2 transform -translate-x-1/2 flex items-center bg-black/5 dark:bg-white/10 px-4 py-1.5 rounded-full cursor-pointer hover:bg-black/10 dark:hover:bg-white/20 transition-all z-20 w-48 justify-center"
           onClick={onCalendarClick}
       >
-          {formatDate(date)}
+          <Search size={14} className="mr-2 opacity-50" />
+          <span className="font-medium opacity-80">{formatDate(date)}</span>
       </div>
 
       {/* Right Side: Status Icons */}
-      <div className="flex items-center space-x-4 space-x-reverse h-full font-medium">
-        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
+      <div className="flex items-center space-x-3 space-x-reverse h-full font-medium">
+        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1.5 rounded-full transition-colors hidden sm:block">
             <Battery size={16} className="rotate-0" />
         </div>
-        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors hidden sm:block">
+        <div className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1.5 rounded-full transition-colors hidden sm:block">
             <Wifi size={16} />
         </div>
         <div 
-            className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1 rounded transition-colors"
+            className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/20 p-1.5 rounded-full transition-colors"
             onClick={onSystemMenuClick}
         >
-             <Command size={16} />
+             <Volume2 size={16} />
         </div>
       </div>
     </div>
