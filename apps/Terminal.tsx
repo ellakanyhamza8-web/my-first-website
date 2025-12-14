@@ -63,6 +63,7 @@ Available Commands:
   clear       Clear terminal screen
   whoami      Display current user
   youtube     Show channel info
+  github      Show GitHub profile
   contact     Show contact details (Phone/Email)
   ask [query] Ask Hamza's AI Assistant (Powered by Gemini)
   exit        Close terminal
@@ -85,6 +86,10 @@ Available Commands:
         case 'youtube':
            setHistory(prev => [...prev, { type: 'output', content: 'Channel: Hamza Full HD (@hamzaellakany-hf5kw)\nURL: https://youtube.com/@hamzaellakany-hf5kw?si=yCLTQX9O6_eXccyM' }]);
            break;
+        
+        case 'github':
+            setHistory(prev => [...prev, { type: 'output', content: 'GitHub: https://github.com/ellakanyhamza8-web' }]);
+            break;
 
         case 'contact':
             setHistory(prev => [...prev, { type: 'output', content: 'Phone/WhatsApp: 01030722501\nEmail: ellakanyhamza8@gmail.com' }]);

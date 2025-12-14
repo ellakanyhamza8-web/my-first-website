@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { X, Minus, Square, Maximize2 } from 'lucide-react';
 import { AppID, WindowState } from '../types';
 
 interface WindowProps {
@@ -29,7 +28,7 @@ export const Window: React.FC<WindowProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Update local position when prop changes (e.g. initial open)
+  // Update local position when prop changes
   useEffect(() => {
     setPosition(windowState.position);
   }, [windowState.position]);
@@ -75,75 +74,80 @@ export const Window: React.FC<WindowProps> = ({
   let style: React.CSSProperties = {};
   
   if (isMobile) {
-    // Phone Mode: Full screen minus topbar and bottom dock
     style = {
-      top: '28px',
+      top: '32px',
       left: 0,
       right: 0,
-      bottom: '60px',
+      bottom: '80px', // More space for floating dock
       width: '100%',
       height: 'auto',
       borderRadius: 0,
     };
   } else if (windowState.isMaximized) {
-    // Desktop Maximized
     style = {
-      top: '28px',
-      left: '70px',
+      top: '32px',
+      left: 0,
       right: 0,
-      bottom: 0,
+      bottom: '80px', // Space for Dock
       width: 'auto',
       height: 'auto',
-      borderRadius: 0,
+      borderRadius: '12px',
+      margin: '0 8px',
     };
   } else {
-    // Desktop Windowed
     style = {
       top: position.y,
       left: position.x,
       width: windowState.size.width,
       height: windowState.size.height,
+      borderRadius: '12px',
     };
   }
 
   return (
     <div
-      className="absolute bg-[#3E3E3E] dark:bg-gray-900 rounded-t-lg shadow-2xl flex flex-col overflow-hidden border border-[#1e1e1e] dark:border-gray-800 transition-colors duration-300"
-      style={{ ...style, zIndex: windowState.zIndex }}
+      className="absolute bg-white dark:bg-[#1e1e1e] flex flex-col overflow-hidden shadow-2xl transition-colors duration-300"
+      style={{ ...style, zIndex: windowState.zIndex, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}
       onMouseDown={() => onFocus(windowState.id)}
-      dir="ltr"
+      dir="ltr" // Force LTR for layout consistency of window controls
     >
-      {/* Title Bar */}
+      {/* macOS Title Bar */}
       <div
-        className="h-9 bg-[#2C001E] dark:bg-black flex justify-between items-center px-3 cursor-default select-none"
+        className="h-10 bg-[#f0f0f0] dark:bg-[#2d2d2d] border-b border-gray-200 dark:border-black flex items-center justify-between px-4 cursor-default select-none rounded-t-xl"
         onMouseDown={handleMouseDown}
       >
-        <div className="text-gray-300 text-sm font-medium">{windowState.title}</div>
-        <div className="flex space-x-2">
+        {/* Traffic Lights (Left Side) */}
+        <div className="flex space-x-2 items-center group">
+           <button
+            onClick={(e) => { e.stopPropagation(); onClose(windowState.id); }}
+            className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] flex items-center justify-center hover:brightness-90 transition-all"
+          >
+             <span className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-black/50">×</span>
+          </button>
           <button
             onClick={(e) => { e.stopPropagation(); onMinimize(windowState.id); }}
-            className="p-1 rounded-full hover:bg-white/10 text-gray-400 hover:text-white"
+            className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] flex items-center justify-center hover:brightness-90 transition-all"
           >
-            <Minus size={14} />
+             <span className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-black/50">−</span>
           </button>
-          {!isMobile && (
-            <button
-              className="p-1 rounded-full hover:bg-white/10 text-gray-400 hover:text-white"
-            >
-               {windowState.isMaximized ? <Square size={12} /> : <Maximize2 size={12} />}
-            </button>
-          )}
           <button
-            onClick={(e) => { e.stopPropagation(); onClose(windowState.id); }}
-            className="p-1 rounded-full bg-[#E95420] text-white hover:bg-[#c74418]"
+            className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] flex items-center justify-center hover:brightness-90 transition-all"
           >
-            <X size={14} />
+             <span className="opacity-0 group-hover:opacity-100 text-[6px] font-bold text-black/50">sw</span>
           </button>
         </div>
+
+        {/* Title */}
+        <div className="text-gray-700 dark:text-gray-300 text-sm font-semibold flex-1 text-center">
+            {windowState.title}
+        </div>
+
+        {/* Spacer to balance title */}
+        <div className="w-14"></div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 bg-[#F7F7F7] dark:bg-[#1a1a1a] dark:text-gray-200 overflow-auto relative text-gray-900 transition-colors duration-300">
+      <div className="flex-1 bg-white dark:bg-[#1a1a1a] dark:text-gray-200 overflow-auto relative text-gray-900 transition-colors duration-300">
         {children}
       </div>
     </div>

@@ -5,7 +5,10 @@ export enum AppID {
   TERMINAL = 'terminal',
   PROJECTS = 'projects',
   YOUTUBE = 'youtube',
-  SETTINGS = 'settings'
+  SETTINGS = 'settings',
+  FILES = 'files',
+  CALCULATOR = 'calculator',
+  EDITOR = 'editor'
 }
 
 export type Language = 'ar' | 'en' | 'zh';

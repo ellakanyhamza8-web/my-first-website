@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Monitor, Youtube, Terminal, Phone, Mail } from 'lucide-react';
+import { Cpu, Monitor, Youtube, Terminal, Phone, Mail, Github } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../utils/translations';
 
@@ -44,7 +44,7 @@ export const AboutApp: React.FC<AboutAppProps> = ({ lang }) => {
                 </p>
             </div>
             
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all">
+            <a href="https://youtube.com/@hamzaellakany-hf5kw?si=yCLTQX9O6_eXccyM" target="_blank" rel="noopener noreferrer" className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer">
                 <div className="flex items-center mb-4 text-red-600">
                     <Youtube size={24} className={lang === 'ar' ? 'ml-2' : 'mr-2'} />
                     <h3 className="text-xl font-bold">{t.youtubeTitle}</h3>
@@ -52,7 +52,17 @@ export const AboutApp: React.FC<AboutAppProps> = ({ lang }) => {
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base">
                     {t.youtubeDesc}
                 </p>
-            </div>
+            </a>
+
+            <a href="https://github.com/ellakanyhamza8-web" target="_blank" rel="noopener noreferrer" className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all cursor-pointer">
+                <div className="flex items-center mb-4 text-gray-900 dark:text-white">
+                    <Github size={24} className={lang === 'ar' ? 'ml-2' : 'mr-2'} />
+                    <h3 className="text-xl font-bold">{t.githubTitle}</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+                    {t.githubDesc}
+                </p>
+            </a>
         </div>
 
         {/* Contact Info Section */}
