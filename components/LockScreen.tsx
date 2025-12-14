@@ -6,12 +6,12 @@ interface LockScreenProps {
   onUnlock: () => void;
   lang: Language;
   wallpaper: string;
+  username?: string;
 }
 
-export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, lang, wallpaper }) => {
+export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, lang, wallpaper, username }) => {
   const [time, setTime] = useState(new Date());
   const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -61,7 +61,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, lang, wallpape
         <div className="w-24 h-24 rounded-full bg-gray-200/20 backdrop-blur-md flex items-center justify-center mb-6 shadow-2xl border-2 border-white/10">
            <User size={48} className="text-white drop-shadow-md" />
         </div>
-        <h2 className="text-2xl font-bold mb-6 drop-shadow-md">Hamza</h2>
+        <h2 className="text-2xl font-bold mb-6 drop-shadow-md capitalize">{username || 'Hamza'}</h2>
         
         <form onSubmit={handleLogin} className="relative w-full">
             <input

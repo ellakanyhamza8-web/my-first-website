@@ -13,11 +13,12 @@ import { LudoApp } from './apps/Ludo';
 import { UnoApp } from './apps/Uno';
 import { GameCenterApp } from './apps/GameCenter';
 import { DevStudioApp } from './apps/DevStudio';
-import { OfficeApp } from './apps/Office'; // Import Office
-import { OdooApp } from './apps/Odoo';     // Import Odoo
+import { OfficeApp } from './apps/Office';
+import { OdooApp } from './apps/Odoo';
 import { AndroidView } from './components/AndroidView';
 import { LockScreen } from './components/LockScreen';
 import { Copilot } from './components/Copilot';
+import { Setup } from './components/Setup';
 import { AppID, AppConfig, WindowState, Language } from './types';
 import { translations } from './utils/translations';
 import { 
@@ -25,7 +26,7 @@ import {
     Sun, Moon, Lock, Bell, Search, Calculator, FileText, Smartphone,
     Gamepad2, Swords, Layers, WifiOff, BluetoothOff, Laptop2,
     LayoutGrid, MonitorPlay, FolderOpen, PowerOff, User, ArrowRight,
-    Table, Presentation, Database // New Icons
+    Table, Presentation
 } from 'lucide-react';
 
 const INITIAL_WINDOWS: Record<string, WindowState> = {
@@ -202,6 +203,7 @@ const INITIAL_WINDOWS: Record<string, WindowState> = {
 };
 
 export default function App() {
+  const [username, setUsername] = useState<string | null>(null);
   const [windows, setWindows] = useState<Record<string, WindowState>>(INITIAL_WINDOWS);
   const [activeAppId, setActiveAppId] = useState<AppID | null>(AppID.ABOUT);
   const [maxZIndex, setMaxZIndex] = useState(10);
@@ -210,18 +212,19 @@ export default function App() {
   const [lang, setLang] = useState<Language>('ar');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAndroidMode, setIsAndroidMode] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
   
-  // Selection State for Desktop Icons
+  // OOBE State
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
+  // Lock Screen State (Starts true, but waits for setup check)
+  const [isLocked, setIsLocked] = useState(true);
+  
   const [selectedDesktopIcon, setSelectedDesktopIcon] = useState<AppID | null>(null);
 
-  // New Interactive States
   const [isSystemMenuOpen, setIsSystemMenuOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAppGridOpen, setIsAppGridOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false); 
 
-  // System Controls State
   const [wifiEnabled, setWifiEnabled] = useState(true);
   const [bluetoothEnabled, setBluetoothEnabled] = useState(false);
   const [brightness, setBrightness] = useState(100);
@@ -229,7 +232,19 @@ export default function App() {
 
   const [browserGameUrl, setBrowserGameUrl] = useState<{url: string, title: string} | null>(null);
 
+  // Initialize from LocalStorage
   useEffect(() => {
+    const storedUser = localStorage.getItem('win12_username');
+    if (storedUser) {
+        setUsername(storedUser);
+        setIsSetupComplete(true);
+        // If returning user, isLocked is true by default
+    } else {
+        // New user
+        setIsSetupComplete(false);
+        setIsLocked(false); // Don't lock, show setup instead
+    }
+
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
     if (isDarkMode) {
@@ -238,6 +253,14 @@ export default function App() {
         document.documentElement.classList.remove('dark');
     }
   }, [lang, isDarkMode]);
+
+  const handleSetupComplete = (name: string) => {
+      localStorage.setItem('win12_username', name);
+      setUsername(name);
+      setIsSetupComplete(true);
+      // Go straight to desktop after setup
+      setIsLocked(false);
+  };
 
   const t = translations[lang];
 
@@ -495,8 +518,14 @@ export default function App() {
     }
   };
 
+  // OOBE Check
+  if (!isSetupComplete) {
+      return <Setup onComplete={handleSetupComplete} lang={lang} />;
+  }
+
+  // Lock Screen Check
   if (isLocked) {
-      return <LockScreen onUnlock={() => setIsLocked(false)} lang={lang} wallpaper={wallpaper} />;
+      return <LockScreen onUnlock={() => setIsLocked(false)} lang={lang} wallpaper={wallpaper} username={username || 'User'} />;
   }
 
   if (browserGameUrl) {
@@ -766,7 +795,7 @@ export default function App() {
                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
                        <User size={16} />
                    </div>
-                   <span className="text-sm font-bold dark:text-white">Hamza</span>
+                   <span className="text-sm font-bold dark:text-white">{username || 'Hamza'}</span>
                </div>
                <button 
                   onClick={() => window.location.reload()}
